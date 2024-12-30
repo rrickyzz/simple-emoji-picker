@@ -18,6 +18,8 @@ class EmojiSelector extends StatefulWidget {
   final EdgeInsets padding;
   final bool withTitle;
   final Function(EmojiData) onSelected;
+  final Widget Function(BuildContext context, TextEditingController controller)?
+      customSearchBarBuilder;
 
   const EmojiSelector({
     Key? key,
@@ -26,6 +28,7 @@ class EmojiSelector extends StatefulWidget {
     this.padding = EdgeInsets.zero,
     this.withTitle = true,
     required this.onSelected,
+    this.customSearchBarBuilder,
   }) : super(key: key);
 
   @override
@@ -220,29 +223,11 @@ class _EmojiSelectorState extends State<EmojiSelector> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 32.0,
-            child: TextField(
-              controller: _controller,
-              onChanged: searchEmoji,
-              cursorColor: Colors.grey,
-              style: TextStyle(fontSize: 12),
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.zero,
-                filled: true,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none),
-                hintText: 'Search Emoji',
-                hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
-                prefixIcon: Container(
-                  child: Icon(Icons.search),
-                  width: 16,
-                ),
-              ),
-            ),
-          ),
+          // Use custom search bar if provided
+          if (widget.customSearchBarBuilder != null)
+            widget.customSearchBarBuilder!(context, _controller)
+          else
+            _buildDefaultSearchBar(),
           SizedBox(height: 4),
           if (widget.withTitle)
             Text(
@@ -335,6 +320,27 @@ class _EmojiSelectorState extends State<EmojiSelector> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDefaultSearchBar() {
+    return TextField(
+      controller: _controller,
+      onChanged: searchEmoji,
+      cursorColor: Colors.grey,
+      style: const TextStyle(fontSize: 12),
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: EdgeInsets.zero,
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide.none,
+        ),
+        hintText: 'Search Emoji',
+        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+        prefixIcon: const Icon(Icons.search, size: 16),
       ),
     );
   }
