@@ -18,8 +18,8 @@ class EmojiSelector extends StatefulWidget {
   final EdgeInsets padding;
   final bool withTitle;
   final Function(EmojiData) onSelected;
-  final Widget Function(BuildContext context, TextEditingController controller)?
-      customSearchBarBuilder;
+  final Widget Function(BuildContext context, TextEditingController controller,
+      Function searchEmoji)? customSearchBarBuilder;
 
   const EmojiSelector({
     Key? key,
@@ -225,7 +225,7 @@ class _EmojiSelectorState extends State<EmojiSelector> {
         children: [
           // Use custom search bar if provided
           if (widget.customSearchBarBuilder != null)
-            widget.customSearchBarBuilder!(context, _controller)
+            widget.customSearchBarBuilder!(context, _controller, searchEmoji)
           else
             _buildDefaultSearchBar(),
           SizedBox(height: 4),
